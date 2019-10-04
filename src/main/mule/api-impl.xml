@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<mule xmlns:file="http://www.mulesoft.org/schema/mule/file" xmlns="http://www.mulesoft.org/schema/mule/core"
-	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
-http://www.mulesoft.org/schema/mule/file http://www.mulesoft.org/schema/mule/file/current/mule-file.xsd">
+<mule xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns:file="http://www.mulesoft.org/schema/mule/file"
+	xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/file http://www.mulesoft.org/schema/mule/file/current/mule-file.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
 	<file:config name="working_dir_config" doc:name="File Config" doc:id="8e81f793-8cc3-43ab-b35f-eab4cc6741fe" >
 		<file:connection workingDir="${user.home}" />
 	</file:config>
@@ -11,7 +12,6 @@ http://www.mulesoft.org/schema/mule/file http://www.mulesoft.org/schema/mule/fil
 		<parse-template doc:name="home.html" doc:id="8fcfee92-eae9-4254-9135-1011395b48b5" location="template\home.html"/>
 	</sub-flow>
 	<sub-flow name="get:\generate-impl" doc:id="688c3f94-4319-477a-8a82-7938a768d912" >
-		<logger level="INFO" doc:name="Logger" doc:id="f63102d2-449d-494c-bf1e-758893871275" />
 		<set-variable value="bat" doc:name="Set Variable" doc:id="5cf601ac-529f-4d6c-8942-9ed63176dec1" variableName="project_name"/>
 		<flow-ref doc:name="create-dirs" doc:id="96c298b6-07a0-4b4b-8844-f84934c82e03" name="create-dirs"/>
 		<flow-ref doc:name="create-files" doc:id="19c8f0ac-ae95-4c76-8757-5147f7a7e338" name="create-files"/>
@@ -21,13 +21,19 @@ http://www.mulesoft.org/schema/mule/file http://www.mulesoft.org/schema/mule/fil
 		<file:create-directory doc:name="/src/main/mule" doc:id="aa898515-e736-4c6f-b5db-f2147964cfb8" directoryPath='#[vars.project_name ++ "/src/main/mule"]' config-ref="working_dir_config" />
 		<file:create-directory doc:name="/src/main/java" doc:id="910d1567-3a9e-46a1-b9ae-fa538986413e" config-ref="working_dir_config" directoryPath='#[vars.project_name ++ "/src/main/java"]' />
 		<file:create-directory doc:name="/src/main/resources" doc:id="3ef24f01-fa5d-4180-9873-c642e99ffb4a" config-ref="working_dir_config" directoryPath='#[vars.project_name ++ "/src/main/resources"]' />
+		<file:create-directory doc:name="/src/main/resources/api" doc:id="0b6e03db-6b09-4700-8588-dbb2c252b0ba" config-ref="working_dir_config" directoryPath='#[vars.project_name ++ "/src/main/resources/api"]' />
 		<file:create-directory doc:name="/src/test/java" doc:id="07984911-17b9-46ec-b23c-17c96d5e3c1d" directoryPath='#[vars.project_name ++ "/src/test/java"]' config-ref="working_dir_config" />
 		<file:create-directory doc:name="/src/test/munit" doc:id="f13c7cbf-a080-4dad-b7a5-6af161dc246e" directoryPath='#[vars.project_name ++ "/src/test/munit"]' config-ref="working_dir_config" />
 		<file:create-directory doc:name="/src/test/resources" doc:id="f94df762-d797-4461-9376-db5494e2d7e2" directoryPath='#[vars.project_name ++ "/src/test/resources"]' config-ref="working_dir_config" />
-		<file:create-directory doc:name="target" doc:id="fc4e5532-c4b5-4ce8-8e6a-1f0686e7843f" config-ref="working_dir_config" directoryPath='#[vars.project_name ++ "/target"]' />
+		<file:create-directory doc:name="/target" doc:id="fc4e5532-c4b5-4ce8-8e6a-1f0686e7843f" config-ref="working_dir_config" directoryPath='#[vars.project_name ++ "/target"]' />
 	</sub-flow>
 	<sub-flow name="create-files" doc:id="5e2e625e-779d-431e-b717-2bbb2f39e7bd" >
+		<set-payload value='#[readUrl("classpath://template/mule-artifact.json", "application/java")]' doc:name="Set Payload" doc:id="40c1a6ce-3278-4ac9-97dc-0566b509b2b8" />
 		<file:write doc:name="mule-artifact.json" doc:id="4274c3bb-c662-4040-8dbd-621b056f4034" config-ref="working_dir_config" path='#[vars.project_name ++ "/mule-artifact.json"]' />
+		<set-payload value='#[readUrl("classpath://template/pom.xml", "application/java") replace /[~]/ with  (vars.project_name)]' doc:name="Set Payload" doc:id="d63f8983-fe9e-4bcf-a3c5-a135ee040a4a" />
+		<file:write doc:name="pom.xml" doc:id="c1550d99-b6dd-4ce0-9c22-baeb0485db60" config-ref="working_dir_config" path='#[vars.project_name ++ "/pom.xml"]'/>
+		<set-payload value='#[readUrl("classpath://template/proj-classpath", "application/java")]' doc:name="Set Payload" doc:id="2a8f1b92-ccb9-46de-bc73-0d3b6de75a02" />
+		<file:write doc:name=".classpath" doc:id="902dc777-fac0-4f61-be56-9c618ca8a820" path='#[vars.project_name ++ "/.classpath"]' config-ref="working_dir_config"/>
 	</sub-flow>
 
 </mule>
