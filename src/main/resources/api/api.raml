@@ -9,7 +9,10 @@ title: Sample API
           application/html:
 /generate:
   get:
+    queryParameters:
+      project:
+        required: true
     responses:
       200:
         body:
-          application/html:
+          application/octet-stream:

@@ -8,11 +8,13 @@ http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/
 	<file:config name="working_dir_config" doc:name="File Config" doc:id="8e81f793-8cc3-43ab-b35f-eab4cc6741fe" >
 		<file:connection workingDir="${user.home}" />
 	</file:config>
+	
 	<sub-flow name="get:\home-impl" doc:id="b9fa70de-b8d5-418e-aa2f-aeaa32da1775" >
 		<parse-template doc:name="home.html" doc:id="8fcfee92-eae9-4254-9135-1011395b48b5" location="template\home.html"/>
-	</sub-flow>
+	
+</sub-flow>
 	<sub-flow name="get:\generate-impl" doc:id="688c3f94-4319-477a-8a82-7938a768d912" >
-		<set-variable value="bat" doc:name="Set Variable" doc:id="5cf601ac-529f-4d6c-8942-9ed63176dec1" variableName="project_name"/>
+		<set-variable value="#[attributes.queryParams.project]" doc:name="Set Variable" doc:id="0de80dab-5f47-4e88-b725-d353ccceacc4" variableName="project_name"/>
 		<flow-ref doc:name="create-dirs" doc:id="96c298b6-07a0-4b4b-8844-f84934c82e03" name="create-dirs"/>
 		<flow-ref doc:name="create-files" doc:id="19c8f0ac-ae95-4c76-8757-5147f7a7e338" name="create-files"/>
 	
@@ -28,12 +30,21 @@ http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/
 		<file:create-directory doc:name="/target" doc:id="fc4e5532-c4b5-4ce8-8e6a-1f0686e7843f" config-ref="working_dir_config" directoryPath='#[vars.project_name ++ "/target"]' />
 	</sub-flow>
 	<sub-flow name="create-files" doc:id="5e2e625e-779d-431e-b717-2bbb2f39e7bd" >
+		<flow-ref doc:name="create-classpath-file" doc:id="db4bebc7-d2a0-4d1d-a0ff-84fbf710953c" name="create-classpath-file"/>
+		<flow-ref doc:name="create-pom-file" doc:id="a8c395a6-fa06-4cce-a6c2-f8e46fff9d3d" name="create-pom-file" />
+		<flow-ref doc:name="create-mule-artifact-file" doc:id="7a5a9c58-33a0-40e1-83d6-005abb590439" name="create-mule-artifact-file"/>
+	</sub-flow>
+	<sub-flow name="create-pom-file" doc:id="78949f12-6bc3-45d6-9a07-dd71bf8280d6" >
+		<set-payload value='#[readUrl("classpath://template/pom.xml", "application/java") replace /[~]/ with  (vars.project_name)]' doc:name="Set Payload" doc:id="4e87cdaa-3321-4431-b016-d3a28692302f" />
+		<file:write doc:name="pom.xml" doc:id="6f44905a-27af-4f0a-a017-b2a311701745" config-ref="working_dir_config" path='#[vars.project_name ++ "/pom.xml"]' />
+	
+</sub-flow>
+	<sub-flow name="create-classpath-file" doc:id="b1db3b92-d1ef-47ee-ba8e-6260bb6b41c3" >
+		<set-payload value='#[readUrl("classpath://template/proj-classpath", "application/java")]' doc:name="Set Payload" doc:id="2a8f1b92-ccb9-46de-bc73-0d3b6de75a02" />
+		<file:write doc:name=".classpath" doc:id="902dc777-fac0-4f61-be56-9c618ca8a820" path='#[vars.project_name ++ "/.classpath"]' config-ref="working_dir_config" />
+	</sub-flow>
+	<sub-flow name="create-mule-artifact-file" doc:id="6eb7b269-2ce4-4670-b37a-4afd7b6e3c29" >
 		<set-payload value='#[readUrl("classpath://template/mule-artifact.json", "application/java")]' doc:name="Set Payload" doc:id="40c1a6ce-3278-4ac9-97dc-0566b509b2b8" />
 		<file:write doc:name="mule-artifact.json" doc:id="4274c3bb-c662-4040-8dbd-621b056f4034" config-ref="working_dir_config" path='#[vars.project_name ++ "/mule-artifact.json"]' />
-		<set-payload value='#[readUrl("classpath://template/pom.xml", "application/java") replace /[~]/ with  (vars.project_name)]' doc:name="Set Payload" doc:id="d63f8983-fe9e-4bcf-a3c5-a135ee040a4a" />
-		<file:write doc:name="pom.xml" doc:id="c1550d99-b6dd-4ce0-9c22-baeb0485db60" config-ref="working_dir_config" path='#[vars.project_name ++ "/pom.xml"]'/>
-		<set-payload value='#[readUrl("classpath://template/proj-classpath", "application/java")]' doc:name="Set Payload" doc:id="2a8f1b92-ccb9-46de-bc73-0d3b6de75a02" />
-		<file:write doc:name=".classpath" doc:id="902dc777-fac0-4f61-be56-9c618ca8a820" path='#[vars.project_name ++ "/.classpath"]' config-ref="working_dir_config"/>
 	</sub-flow>
-
 </mule>

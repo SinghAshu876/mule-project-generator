@@ -97,7 +97,7 @@ output application/json
         </error-handler>
     </flow>
     <flow name="get:\generate:api-config">
-        <logger level="INFO" message="get:\generate:api-config" />
+        <logger level="INFO" message="get:\generate:api-config" doc:id="6ddbf4a0-a11a-4c3c-bad4-df97bd532a76"/>
 		<flow-ref doc:name="get:\generate-impl" doc:id="acb2aefa-2b48-417b-bdbd-1628fb2b72ad" name="get:\generate-impl"/>
     </flow>
     <flow name="get:\home:api-config">
