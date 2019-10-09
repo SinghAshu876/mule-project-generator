@@ -33,6 +33,7 @@ http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/
 		<flow-ref doc:name="create-mule-artifact-file" doc:id="7a5a9c58-33a0-40e1-83d6-005abb590439" name="create-mule-artifact-file"/>
 		<flow-ref doc:name="create-project-file" doc:id="e6170495-a3d7-4146-be45-9f3817dfe90a" name="create-project-file"/>
 		<flow-ref doc:name="create-log4j-files" doc:id="298c1355-bbc7-486b-a96e-ebf1ef623fec" name="create-log4j-files"/>
+		<flow-ref doc:name="create-config-file" doc:id="46d838de-e640-4ab1-8b9a-0e8585e5489d" name="create-config-file"/>
 	</sub-flow>
 	<sub-flow name="create-log4j-files" doc:id="819ea074-53cd-4b67-8c0e-b1fa08ee4250" >
 		<flow-ref doc:name="create-log4j2-file" doc:id="4700c0da-9168-4ffd-a8da-13c7b41d5d4e" name="create-log4j2-file" />
@@ -61,5 +62,9 @@ http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/
 	<sub-flow name="create-log4j2-test-file" doc:id="4fc727fc-551a-49e6-adc8-f60c6bb5e68e" >
 		<set-payload value='#[readUrl("classpath://template/log4j2-test.xml", "application/java")]' doc:name="Set Payload" doc:id="5aeb801b-d0ab-4f16-af29-725c69094432" />
 		<file:write doc:name="mule-artifact.json" doc:id="0dd07277-6f14-4a52-b50c-bf8c06f38034" config-ref="working_dir_config" path='#[vars.project_name ++ "/src/test/resources/log4j2-test.xml"]' />
+	</sub-flow>
+	<sub-flow name="create-config-file" doc:id="e2f498dc-74ae-4573-b90d-ed39b9653fb7" >
+		<set-payload value='#[readUrl("classpath://template/config.xml", "application/java")]' doc:name="Set Payload" doc:id="264f796a-2d44-43dc-a87a-012bf3cb7a1c" />
+		<file:write doc:name="config.xml" doc:id="9420a9bc-2a40-4edc-b24c-0407f0a8509e" config-ref="working_dir_config" path='#[vars.project_name ++ "/src/main/mule/config.xml"]' />
 	</sub-flow>
 </mule>
