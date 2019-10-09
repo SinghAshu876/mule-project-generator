@@ -1,12 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<mule xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns:file="http://www.mulesoft.org/schema/mule/file"
-	xmlns="http://www.mulesoft.org/schema/mule/core"
-	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+<mule xmlns:java="http://www.mulesoft.org/schema/mule/java" xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core"
+	xmlns:file="http://www.mulesoft.org/schema/mule/file"
+	xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
 http://www.mulesoft.org/schema/mule/file http://www.mulesoft.org/schema/mule/file/current/mule-file.xsd
-http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd
+http://www.mulesoft.org/schema/mule/java http://www.mulesoft.org/schema/mule/java/current/mule-java.xsd">
 	<file:config name="working_dir_config" doc:name="File Config" doc:id="8e81f793-8cc3-43ab-b35f-eab4cc6741fe" >
-		<file:connection workingDir="${user.home}" />
+		<file:connection workingDir="#[server.userHome]" />
 	</file:config>
 	
 	<sub-flow name="get:\home-impl" doc:id="b9fa70de-b8d5-418e-aa2f-aeaa32da1775" >
@@ -16,7 +17,15 @@ http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/
 		<set-variable value="#[attributes.queryParams.project]" doc:name="Set Variable" doc:id="0de80dab-5f47-4e88-b725-d353ccceacc4" variableName="project_name"/>
 		<flow-ref doc:name="create-dirs" doc:id="96c298b6-07a0-4b4b-8844-f84934c82e03" name="create-dirs"/>
 		<flow-ref doc:name="create-files" doc:id="19c8f0ac-ae95-4c76-8757-5147f7a7e338" name="create-files"/>
-	</sub-flow>
+		<java:new doc:name="ZipResponseGenerator" doc:id="b0b4af2e-b975-4631-88ac-33a68ad38e6d" class="com.bat.ZipResponseGenerator" constructor="ZipResponseGenerator()" target="zipper"/>
+		<java:invoke doc:name="createResponse" doc:id="17a68e99-a14a-4c69-af84-e62b7dbde3e9" class="com.bat.ZipResponseGenerator" method="createResponse(java.lang.String,java.lang.String)" instance="#[vars.zipper]">
+			<java:args ><![CDATA[#[{
+	arg0:server.userHome,
+	arg1:vars.project_name
+}]]]></java:args>
+		</java:invoke>
+	
+</sub-flow>
 	<sub-flow name="create-dirs" doc:id="ddac91d7-36ed-40ef-85c6-336a8739f27c" >
 		<file:create-directory doc:name="/src/main/mule" doc:id="aa898515-e736-4c6f-b5db-f2147964cfb8" directoryPath='#[vars.project_name ++ "/src/main/mule"]' config-ref="working_dir_config" />
 		<file:create-directory doc:name="/src/main/java" doc:id="910d1567-3a9e-46a1-b9ae-fa538986413e" config-ref="working_dir_config" directoryPath='#[vars.project_name ++ "/src/main/java"]' />

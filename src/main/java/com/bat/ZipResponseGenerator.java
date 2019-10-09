@@ -1,4 +1,5 @@
 package com.bat;
+
 /**
  * @author a.cr.kumar.singh
  */
@@ -57,7 +58,7 @@ public class ZipResponseGenerator {
 		zipFile(fileToZip, fileToZip.getName(), zipOut);
 		zipOut.close();
 		baos.close();
-		deleteDirectory(fileToZip);
+		//deleteDirectory(fileToZip);
 		return baos.toByteArray();
 	}
 
