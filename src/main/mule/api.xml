@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<mule xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:apikit="http://www.mulesoft.org/schema/mule/mule-apikit" xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd http://www.mulesoft.org/schema/mule/mule-apikit http://www.mulesoft.org/schema/mule/mule-apikit/current/mule-apikit.xsd ">
+<mule xmlns:scripting="http://www.mulesoft.org/schema/mule/scripting" xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:apikit="http://www.mulesoft.org/schema/mule/mule-apikit" xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd http://www.mulesoft.org/schema/mule/mule-apikit http://www.mulesoft.org/schema/mule/mule-apikit/current/mule-apikit.xsd 
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd
+http://www.mulesoft.org/schema/mule/scripting http://www.mulesoft.org/schema/mule/scripting/current/mule-scripting.xsd">
     <http:listener-config name="api-httpListenerConfig">
         <http:listener-connection host="0.0.0.0" port="8081" />
     </http:listener-config>
@@ -98,7 +100,14 @@ output application/json
     </flow>
     <flow name="get:\generate:api-config">
         <logger level="INFO" message="get:\generate:api-config" doc:id="6ddbf4a0-a11a-4c3c-bad4-df97bd532a76"/>
+		<set-variable value="#[attributes.queryParams.project]" doc:name="Set Variable" doc:id="acd79554-af1a-483a-ac23-cd8c28a2bc5d" variableName="project_name"/>
 		<flow-ref doc:name="get:\generate-impl" doc:id="acb2aefa-2b48-417b-bdbd-1628fb2b72ad" name="get:\generate-impl"/>
+		<scripting:execute doc:name="Execute" doc:id="0d57e93e-1301-42e6-b694-9c9c4eab4ce1" engine="groovy">
+			<scripting:code >vars.outboundHeaders.put(&quot;Content-Disposition&quot;, &quot;attachment; filename=\&quot;&quot; + vars.project_name +&quot;.zip&quot;+ &quot;\&quot;&quot;);
+vars.outboundHeaders.put(&quot;Content-Type&quot;, &quot;application/zip&quot;);
+return payload;
+</scripting:code>
+		</scripting:execute>
     </flow>
     <flow name="get:\home:api-config">
         <logger level="INFO" message="get:\home:api-config" />

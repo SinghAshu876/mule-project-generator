@@ -14,7 +14,6 @@ http://www.mulesoft.org/schema/mule/java http://www.mulesoft.org/schema/mule/jav
 		<parse-template doc:name="home.html" doc:id="8fcfee92-eae9-4254-9135-1011395b48b5" location="template\home.html"/>
 	</sub-flow>
 	<sub-flow name="get:\generate-impl" doc:id="688c3f94-4319-477a-8a82-7938a768d912" >
-		<set-variable value="#[attributes.queryParams.project]" doc:name="Set Variable" doc:id="0de80dab-5f47-4e88-b725-d353ccceacc4" variableName="project_name"/>
 		<flow-ref doc:name="create-dirs" doc:id="96c298b6-07a0-4b4b-8844-f84934c82e03" name="create-dirs"/>
 		<flow-ref doc:name="create-files" doc:id="19c8f0ac-ae95-4c76-8757-5147f7a7e338" name="create-files"/>
 		<java:new doc:name="ZipResponseGenerator" doc:id="b0b4af2e-b975-4631-88ac-33a68ad38e6d" class="com.bat.ZipResponseGenerator" constructor="ZipResponseGenerator()" target="zipper"/>
