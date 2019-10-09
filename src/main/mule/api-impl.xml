@@ -11,14 +11,12 @@ http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/
 	
 	<sub-flow name="get:\home-impl" doc:id="b9fa70de-b8d5-418e-aa2f-aeaa32da1775" >
 		<parse-template doc:name="home.html" doc:id="8fcfee92-eae9-4254-9135-1011395b48b5" location="template\home.html"/>
-	
-</sub-flow>
+	</sub-flow>
 	<sub-flow name="get:\generate-impl" doc:id="688c3f94-4319-477a-8a82-7938a768d912" >
 		<set-variable value="#[attributes.queryParams.project]" doc:name="Set Variable" doc:id="0de80dab-5f47-4e88-b725-d353ccceacc4" variableName="project_name"/>
 		<flow-ref doc:name="create-dirs" doc:id="96c298b6-07a0-4b4b-8844-f84934c82e03" name="create-dirs"/>
 		<flow-ref doc:name="create-files" doc:id="19c8f0ac-ae95-4c76-8757-5147f7a7e338" name="create-files"/>
-	
-</sub-flow>
+	</sub-flow>
 	<sub-flow name="create-dirs" doc:id="ddac91d7-36ed-40ef-85c6-336a8739f27c" >
 		<file:create-directory doc:name="/src/main/mule" doc:id="aa898515-e736-4c6f-b5db-f2147964cfb8" directoryPath='#[vars.project_name ++ "/src/main/mule"]' config-ref="working_dir_config" />
 		<file:create-directory doc:name="/src/main/java" doc:id="910d1567-3a9e-46a1-b9ae-fa538986413e" config-ref="working_dir_config" directoryPath='#[vars.project_name ++ "/src/main/java"]' />
@@ -33,18 +31,35 @@ http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/
 		<flow-ref doc:name="create-classpath-file" doc:id="db4bebc7-d2a0-4d1d-a0ff-84fbf710953c" name="create-classpath-file"/>
 		<flow-ref doc:name="create-pom-file" doc:id="a8c395a6-fa06-4cce-a6c2-f8e46fff9d3d" name="create-pom-file" />
 		<flow-ref doc:name="create-mule-artifact-file" doc:id="7a5a9c58-33a0-40e1-83d6-005abb590439" name="create-mule-artifact-file"/>
+		<flow-ref doc:name="create-project-file" doc:id="e6170495-a3d7-4146-be45-9f3817dfe90a" name="create-project-file"/>
+		<flow-ref doc:name="create-log4j-files" doc:id="298c1355-bbc7-486b-a96e-ebf1ef623fec" name="create-log4j-files"/>
+	</sub-flow>
+	<sub-flow name="create-log4j-files" doc:id="819ea074-53cd-4b67-8c0e-b1fa08ee4250" >
+		<flow-ref doc:name="create-log4j2-file" doc:id="4700c0da-9168-4ffd-a8da-13c7b41d5d4e" name="create-log4j2-file" />
+		<flow-ref doc:name="create-log4j2-test-file" doc:id="724db39d-a6b6-4744-a56b-84d51ebc6dd1" name="create-log4j2-test-file" />
 	</sub-flow>
 	<sub-flow name="create-pom-file" doc:id="78949f12-6bc3-45d6-9a07-dd71bf8280d6" >
 		<set-payload value='#[readUrl("classpath://template/pom.xml", "application/java") replace /[~]/ with  (vars.project_name)]' doc:name="Set Payload" doc:id="4e87cdaa-3321-4431-b016-d3a28692302f" />
 		<file:write doc:name="pom.xml" doc:id="6f44905a-27af-4f0a-a017-b2a311701745" config-ref="working_dir_config" path='#[vars.project_name ++ "/pom.xml"]' />
-	
-</sub-flow>
+    </sub-flow>
+    <sub-flow name="create-project-file" doc:id="80cb6b37-1744-4efe-bf43-6889f2dd15a0" >
+		<set-payload value='#[readUrl("classpath://template/proj-project", "application/java") replace /[~]/ with  (vars.project_name)]' doc:name="Set Payload" doc:id="c6affd7c-a4fa-4a87-a1af-0483afdfaf0e" />
+		<file:write doc:name=".project" doc:id="781c24e7-5acf-4718-b618-a6828c2aaf1e" config-ref="working_dir_config" path='#[vars.project_name ++ "/.project"]' />
+    </sub-flow>
 	<sub-flow name="create-classpath-file" doc:id="b1db3b92-d1ef-47ee-ba8e-6260bb6b41c3" >
 		<set-payload value='#[readUrl("classpath://template/proj-classpath", "application/java")]' doc:name="Set Payload" doc:id="2a8f1b92-ccb9-46de-bc73-0d3b6de75a02" />
-		<file:write doc:name=".classpath" doc:id="902dc777-fac0-4f61-be56-9c618ca8a820" path='#[vars.project_name ++ "/.classpath"]' config-ref="working_dir_config" />
+		<file:write doc:name=".classpath" doc:id="902dc777-fac0-4f61-be56-9c618ca8a820" config-ref="working_dir_config" path='#[vars.project_name ++ "/.classpath"]'  />
 	</sub-flow>
 	<sub-flow name="create-mule-artifact-file" doc:id="6eb7b269-2ce4-4670-b37a-4afd7b6e3c29" >
 		<set-payload value='#[readUrl("classpath://template/mule-artifact.json", "application/java")]' doc:name="Set Payload" doc:id="40c1a6ce-3278-4ac9-97dc-0566b509b2b8" />
 		<file:write doc:name="mule-artifact.json" doc:id="4274c3bb-c662-4040-8dbd-621b056f4034" config-ref="working_dir_config" path='#[vars.project_name ++ "/mule-artifact.json"]' />
+	</sub-flow>
+	<sub-flow name="create-log4j2-file" doc:id="5fffecc9-875c-4d6c-9249-1ee7d22e171c" >
+		<set-payload value='#[readUrl("classpath://template/log4j2.xml", "application/java") replace /[~]/ with  (vars.project_name)]' doc:name="Set Payload" doc:id="34db1414-4356-47ee-829b-4438ff43425f" />
+		<file:write doc:name="mule-artifact.json" doc:id="87e85248-c95c-49be-b195-026487c150ca" config-ref="working_dir_config" path='#[vars.project_name ++ "/src/main/resources/log4j2.xml"]' />
+	</sub-flow>
+	<sub-flow name="create-log4j2-test-file" doc:id="4fc727fc-551a-49e6-adc8-f60c6bb5e68e" >
+		<set-payload value='#[readUrl("classpath://template/log4j2-test.xml", "application/java")]' doc:name="Set Payload" doc:id="5aeb801b-d0ab-4f16-af29-725c69094432" />
+		<file:write doc:name="mule-artifact.json" doc:id="0dd07277-6f14-4a52-b50c-bf8c06f38034" config-ref="working_dir_config" path='#[vars.project_name ++ "/src/test/resources/log4j2-test.xml"]' />
 	</sub-flow>
 </mule>
