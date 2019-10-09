@@ -20,29 +20,7 @@ public class ZipResponseGenerator {
 
 	private final Logger LOG = Logger.getLogger(ZipResponseGenerator.class);
 
-	/*
-	 * @Override public Object onCall(MuleEventContext eventContext) throws
-	 * Exception { MuleMessage muleMsg = eventContext.getMessage();
-	 * 
-	 * String dir = muleMsg.getInvocationProperty(FLOWVARS_DIR); String project =
-	 * muleMsg.getInvocationProperty(FLOWVARS_PROJECT);
-	 * 
-	 * if (project == null || project == "") throw new
-	 * IllegalArgumentException("Missing project param in query params !!!");
-	 * 
-	 * String projectDir = dir.concat(PATH_SEPERATOR).concat(project);
-	 * LOG.info("dir " + dir); LOG.info("project " + project);
-	 * LOG.info("projectDir " + projectDir);
-	 * 
-	 * ByteArrayOutputStream baos = new ByteArrayOutputStream(); ZipOutputStream
-	 * zipOut = new ZipOutputStream(baos); File fileToZip = new File(projectDir);
-	 * 
-	 * zipFile(fileToZip, fileToZip.getName(), zipOut); zipOut.close();
-	 * baos.close();
-	 * 
-	 * muleMsg.setPayload(baos.toByteArray()); deleteDirectory(fileToZip); return
-	 * muleMsg; }
-	 */
+	
 	public byte[] createResponse(String dir, String project) throws Exception {
 		if (project == null || project == "")
 			throw new IllegalArgumentException("Missing project param in query params !!!");
@@ -58,7 +36,7 @@ public class ZipResponseGenerator {
 		zipFile(fileToZip, fileToZip.getName(), zipOut);
 		zipOut.close();
 		baos.close();
-		//deleteDirectory(fileToZip);
+		deleteDirectory(fileToZip);
 		return baos.toByteArray();
 	}
 
