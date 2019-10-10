@@ -13,7 +13,6 @@ import java.io.IOException;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
-import org.apache.commons.io.FileUtils;
 import org.apache.log4j.Logger;
 
 public class ZipResponseGenerator {
@@ -36,7 +35,6 @@ public class ZipResponseGenerator {
 		zipFile(fileToZip, fileToZip.getName(), zipOut);
 		zipOut.close();
 		baos.close();
-		deleteDirectory(fileToZip);
 		return baos.toByteArray();
 	}
 
@@ -68,12 +66,5 @@ public class ZipResponseGenerator {
 		}
 		fis.close();
 	}
-
-	private void deleteDirectory(File projectDir) {
-		try {
-			FileUtils.deleteDirectory(projectDir);
-		} catch (IOException e) {
-			LOG.error("error while deleting Directory " + e);
-		}
-	}
+	
 }

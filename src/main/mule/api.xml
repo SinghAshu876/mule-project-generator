@@ -102,7 +102,7 @@ output application/json
         <logger level="INFO" message="get:\generate:api-config" doc:id="6ddbf4a0-a11a-4c3c-bad4-df97bd532a76"/>
 		<set-variable value="#[attributes.queryParams.project]" doc:name="Set Variable" doc:id="acd79554-af1a-483a-ac23-cd8c28a2bc5d" variableName="project_name"/>
 		<flow-ref doc:name="get:\generate-impl" doc:id="acb2aefa-2b48-417b-bdbd-1628fb2b72ad" name="get:\generate-impl"/>
-		<scripting:execute doc:name="Execute" doc:id="0d57e93e-1301-42e6-b694-9c9c4eab4ce1" engine="groovy">
+		<scripting:execute doc:name="outboundHeaders" doc:id="0d57e93e-1301-42e6-b694-9c9c4eab4ce1" engine="groovy">
 			<scripting:code >vars.outboundHeaders.put(&quot;Content-Disposition&quot;, &quot;attachment; filename=\&quot;&quot; + vars.project_name +&quot;.zip&quot;+ &quot;\&quot;&quot;);
 vars.outboundHeaders.put(&quot;Content-Type&quot;, &quot;application/zip&quot;);
 return payload;
