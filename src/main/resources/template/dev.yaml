@@ -1,0 +1,39 @@
+api:
+ id: "15717772"
+ http:
+  listener:
+   path: "/*"
+   host: "0.0.0.0"
+   port: "8091"
+  response:
+   timeout: "30000"
+
+reconnect:
+ freq: "1000"
+ attempts: "3"
+ timeout: "30000"
+  
+http:
+ sys:
+  bat:
+   host: "mule-worker-internal-system-hr-sf-employeedetails-v2-dev.de-c1.cloudhub.io"
+   port: "8091"
+   path:
+    empdetails: "employeeDetails"
+    activeuserid: "activeUserId"
+    
+targetFlag: "false"
+appId: "004"
+
+common:
+ requester:
+  configref: "HTTP_Request_configuration_without_TLS"
+  host: "mule-worker-internal-s-common-error-handler-v2-dev.de-c1.cloudhub.io"
+  port: "8091"
+  basepath: ""
+  path: "/errorMappings"
+ connection:
+  frequency: "1000"
+  retrycount: "3"
+  responsetimeout: "30000"    
+ 
