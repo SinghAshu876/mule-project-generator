@@ -27,14 +27,15 @@ http://www.mulesoft.org/schema/mule/java http://www.mulesoft.org/schema/mule/jav
 	
 </sub-flow>
 	<sub-flow name="create-dirs" doc:id="ddac91d7-36ed-40ef-85c6-336a8739f27c" >
-		<file:create-directory doc:name="/src/main/mule" doc:id="aa898515-e736-4c6f-b5db-f2147964cfb8" directoryPath='#[vars.project_name ++ "/src/main/mule"]' config-ref="working_dir_config" />
-		<file:create-directory doc:name="/src/main/java" doc:id="910d1567-3a9e-46a1-b9ae-fa538986413e" config-ref="working_dir_config" directoryPath='#[vars.project_name ++ "/src/main/java"]' />
-		<file:create-directory doc:name="/src/main/resources" doc:id="3ef24f01-fa5d-4180-9873-c642e99ffb4a" config-ref="working_dir_config" directoryPath='#[vars.project_name ++ "/src/main/resources"]' />
-		<file:create-directory doc:name="/src/main/resources/api" doc:id="0b6e03db-6b09-4700-8588-dbb2c252b0ba" config-ref="working_dir_config" directoryPath='#[vars.project_name ++ "/src/main/resources/api"]' />
-		<file:create-directory doc:name="/src/test/java" doc:id="07984911-17b9-46ec-b23c-17c96d5e3c1d" directoryPath='#[vars.project_name ++ "/src/test/java"]' config-ref="working_dir_config" />
-		<file:create-directory doc:name="/src/test/munit" doc:id="f13c7cbf-a080-4dad-b7a5-6af161dc246e" directoryPath='#[vars.project_name ++ "/src/test/munit"]' config-ref="working_dir_config" />
-		<file:create-directory doc:name="/src/test/resources" doc:id="f94df762-d797-4461-9376-db5494e2d7e2" directoryPath='#[vars.project_name ++ "/src/test/resources"]' config-ref="working_dir_config" />
-		<file:create-directory doc:name="/target" doc:id="fc4e5532-c4b5-4ce8-8e6a-1f0686e7843f" config-ref="working_dir_config" directoryPath='#[vars.project_name ++ "/target"]' />
+		<set-payload doc:name="Set Payload" doc:id="67a60656-4738-4454-8475-65f3412ae687" value='#[%dw 2.0
+var dirs = ["/src/main/mule","/src/main/java/","/src/main/resources","/src/main/resources/api","/src/test/java","/src/test/munit","/src/test/resources","/target"]
+output application/json
+---
+dirs]'/>
+		<foreach doc:name="For Each" doc:id="d97e5e5b-eca8-4177-a023-359260d0f50f" >
+			<logger level="INFO" doc:name="Logger" doc:id="5bd5ced9-e660-4d4b-9609-94c0b53485d1" message="#[payload]"/>
+			<file:create-directory doc:name="" doc:id="aa898515-e736-4c6f-b5db-f2147964cfb8" directoryPath='#[vars.project_name ++ payload]' config-ref="working_dir_config" />
+		</foreach>
 	</sub-flow>
 	<sub-flow name="create-files" doc:id="5e2e625e-779d-431e-b717-2bbb2f39e7bd" >
 		<flow-ref doc:name="create-classpath-file" doc:id="db4bebc7-d2a0-4d1d-a0ff-84fbf710953c" name="create-classpath-file"/>
