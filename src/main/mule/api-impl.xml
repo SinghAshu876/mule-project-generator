@@ -29,11 +29,11 @@ http://www.mulesoft.org/schema/mule/java http://www.mulesoft.org/schema/mule/jav
 	<sub-flow name="create-dirs" doc:id="ddac91d7-36ed-40ef-85c6-336a8739f27c" >
 		<set-payload doc:name="Set Payload" doc:id="67a60656-4738-4454-8475-65f3412ae687" value='#[%dw 2.0
 var dirs = ["/src/main/mule","/src/main/java/","/src/main/resources","/src/main/resources/api","/src/test/java","/src/test/munit","/src/test/resources","/target"]
-output application/json
+output application/java
 ---
 dirs]'/>
 		<foreach doc:name="For Each" doc:id="d97e5e5b-eca8-4177-a023-359260d0f50f" >
-			<logger level="INFO" doc:name="Logger" doc:id="5bd5ced9-e660-4d4b-9609-94c0b53485d1" message="#[payload]"/>
+			<logger level="INFO" doc:name="Logger" doc:id="5bd5ced9-e660-4d4b-9609-94c0b53485d1" message="folders created ---&gt; #[payload]"/>
 			<file:create-directory doc:name="" doc:id="aa898515-e736-4c6f-b5db-f2147964cfb8" directoryPath='#[vars.project_name ++ payload]' config-ref="working_dir_config" />
 		</foreach>
 	</sub-flow>
