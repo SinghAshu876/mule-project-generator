@@ -27,77 +27,27 @@ http://www.mulesoft.org/schema/mule/java http://www.mulesoft.org/schema/mule/jav
 	
 </sub-flow>
 	<sub-flow name="create-dirs" doc:id="ddac91d7-36ed-40ef-85c6-336a8739f27c" >
-		<set-payload doc:name="Set Payload" doc:id="67a60656-4738-4454-8475-65f3412ae687" value='#[%dw 2.0
-var dirs = ["/src/main/mule","/src/main/java/","/src/main/resources","/src/main/resources/api","/src/test/java","/src/test/munit","/src/test/resources","/target"]
-output application/java
----
-dirs]'/>
+		<ee:transform doc:name="Transform Message" doc:id="d7f99990-2096-4ba5-8f25-ae89b431e8f0" >
+			<ee:message >
+				<ee:set-payload resource="dir_config.dwl" />
+			</ee:message>
+		</ee:transform>
 		<foreach doc:name="For Each" doc:id="d97e5e5b-eca8-4177-a023-359260d0f50f" >
 			<logger level="INFO" doc:name="Logger" doc:id="5bd5ced9-e660-4d4b-9609-94c0b53485d1" message="folders created ---&gt; #[payload]"/>
 			<file:create-directory doc:name="" doc:id="aa898515-e736-4c6f-b5db-f2147964cfb8" directoryPath='#[vars.project_name ++ payload]' config-ref="working_dir_config" />
 		</foreach>
 	</sub-flow>
-	<sub-flow name="create-files" doc:id="5e2e625e-779d-431e-b717-2bbb2f39e7bd" >
-		<flow-ref doc:name="create-classpath-file" doc:id="db4bebc7-d2a0-4d1d-a0ff-84fbf710953c" name="create-classpath-file"/>
-		<flow-ref doc:name="create-pom-file" doc:id="a8c395a6-fa06-4cce-a6c2-f8e46fff9d3d" name="create-pom-file" />
-		<flow-ref doc:name="create-mule-artifact-file" doc:id="7a5a9c58-33a0-40e1-83d6-005abb590439" name="create-mule-artifact-file"/>
-		<flow-ref doc:name="create-project-file" doc:id="e6170495-a3d7-4146-be45-9f3817dfe90a" name="create-project-file"/>
-		<flow-ref doc:name="create-log4j-files" doc:id="298c1355-bbc7-486b-a96e-ebf1ef623fec" name="create-log4j-files"/>
-		<flow-ref doc:name="create-configurations-file" doc:id="46d838de-e640-4ab1-8b9a-0e8585e5489d" name="create-configurations-file"/>
-		<flow-ref doc:name="create-env-files" doc:id="9c7d045d-fea1-49d6-9cdc-7ee6dce513ab" name="create-env-files"/>
-	</sub-flow>
-	<sub-flow name="create-env-files" doc:id="f098e157-909a-493e-9be9-2a9021408743" >
-		<flow-ref doc:name="create-local-yaml-file" doc:id="e4610f14-89fa-49aa-ab7e-c49c1b9bc401" name="create-local-yaml-file" />
-		<flow-ref doc:name="create-test-yaml-file" doc:id="5f7634df-b6b6-4521-b146-03b51ebd66b0" name="create-test-yaml-file"/>
-		<flow-ref doc:name="create-dev-yaml-file" doc:id="0c07f309-0006-424e-bb51-67689afa0a20" name="create-dev-yaml-file"/>
-		<flow-ref doc:name="create-prod-yaml-file" doc:id="70372fca-cc2a-467d-bc1d-5a81e472b1c4" name="create-prod-yaml-file"/>
-	</sub-flow>
-	<sub-flow name="create-log4j-files" doc:id="819ea074-53cd-4b67-8c0e-b1fa08ee4250" >
-		<flow-ref doc:name="create-log4j2-file" doc:id="4700c0da-9168-4ffd-a8da-13c7b41d5d4e" name="create-log4j2-file" />
-		<flow-ref doc:name="create-log4j2-test-file" doc:id="724db39d-a6b6-4744-a56b-84d51ebc6dd1" name="create-log4j2-test-file" />
-	</sub-flow>
-	<sub-flow name="create-pom-file" doc:id="78949f12-6bc3-45d6-9a07-dd71bf8280d6" >
-		<set-payload value='#[readUrl("classpath://template/pom.xml", "application/java") replace /[~]/ with  (vars.project_name)]' doc:name="Set Payload" doc:id="4e87cdaa-3321-4431-b016-d3a28692302f" />
-		<file:write doc:name="pom.xml" doc:id="6f44905a-27af-4f0a-a017-b2a311701745" config-ref="working_dir_config" path='#[vars.project_name ++ "/pom.xml"]' createParentDirectories="false"/>
-    </sub-flow>
-    <sub-flow name="create-project-file" doc:id="80cb6b37-1744-4efe-bf43-6889f2dd15a0" >
-		<set-payload value='#[readUrl("classpath://template/proj-project", "application/java") replace /[~]/ with  (vars.project_name)]' doc:name="Set Payload" doc:id="c6affd7c-a4fa-4a87-a1af-0483afdfaf0e" />
-		<file:write doc:name=".project" doc:id="781c24e7-5acf-4718-b618-a6828c2aaf1e" config-ref="working_dir_config" path='#[vars.project_name ++ "/.project"]' createParentDirectories="false"/>
-    </sub-flow>
-	<sub-flow name="create-classpath-file" doc:id="b1db3b92-d1ef-47ee-ba8e-6260bb6b41c3" >
-		<set-payload value='#[readUrl("classpath://template/proj-classpath", "application/java")]' doc:name="Set Payload" doc:id="2a8f1b92-ccb9-46de-bc73-0d3b6de75a02" />
-		<file:write doc:name=".classpath" doc:id="902dc777-fac0-4f61-be56-9c618ca8a820" config-ref="working_dir_config" path='#[vars.project_name ++ "/.classpath"]' createParentDirectories="false" />
-	</sub-flow>
-	<sub-flow name="create-mule-artifact-file" doc:id="6eb7b269-2ce4-4670-b37a-4afd7b6e3c29" >
-		<set-payload value='#[readUrl("classpath://template/mule-artifact.json", "application/java")]' doc:name="Set Payload" doc:id="40c1a6ce-3278-4ac9-97dc-0566b509b2b8" />
-		<file:write doc:name="mule-artifact.json" doc:id="4274c3bb-c662-4040-8dbd-621b056f4034" config-ref="working_dir_config" path='#[vars.project_name ++ "/mule-artifact.json"]' createParentDirectories="false"/>
-	</sub-flow>
-	<sub-flow name="create-log4j2-file" doc:id="5fffecc9-875c-4d6c-9249-1ee7d22e171c" >
-		<set-payload value='#[readUrl("classpath://template/log4j2.xml", "application/java") replace /[~]/ with  (vars.project_name)]' doc:name="Set Payload" doc:id="34db1414-4356-47ee-829b-4438ff43425f" />
-		<file:write doc:name="log4j2.xml" doc:id="87e85248-c95c-49be-b195-026487c150ca" config-ref="working_dir_config" path='#[vars.project_name ++ "/src/main/resources/log4j2.xml"]' createParentDirectories="false"/>
-	</sub-flow>
-	<sub-flow name="create-log4j2-test-file" doc:id="4fc727fc-551a-49e6-adc8-f60c6bb5e68e" >
-		<set-payload value='#[readUrl("classpath://template/log4j2-test.xml", "application/java")]' doc:name="Set Payload" doc:id="5aeb801b-d0ab-4f16-af29-725c69094432" />
-		<file:write doc:name="log4j2-test.xml" doc:id="0dd07277-6f14-4a52-b50c-bf8c06f38034" config-ref="working_dir_config" path='#[vars.project_name ++ "/src/test/resources/log4j2-test.xml"]' createParentDirectories="false"/>
-	</sub-flow>
-	<sub-flow name="create-configurations-file" doc:id="e2f498dc-74ae-4573-b90d-ed39b9653fb7" >
-		<set-payload value='#[readUrl("classpath://template/configurations.xml", "application/java")]' doc:name="Set Payload" doc:id="264f796a-2d44-43dc-a87a-012bf3cb7a1c" />
-		<file:write doc:name="configurations.xml" doc:id="9420a9bc-2a40-4edc-b24c-0407f0a8509e" config-ref="working_dir_config" path='#[vars.project_name ++ "/src/main/mule/configurations.xml"]' createParentDirectories="false"/>
-	</sub-flow>
-	<sub-flow name="create-local-yaml-file" doc:id="e29ca319-2896-4add-b9ac-64801f8198a6" >
-		<set-payload value='#[readUrl("classpath://template/local.yaml", "application/java")]' doc:name="Set Payload" doc:id="63b0b4d7-0f72-4f1b-b06f-3dca888f349f" />
-		<file:write doc:name="local.yaml" doc:id="de0b8384-6ba4-4edf-8d52-61dce0010a3f" config-ref="working_dir_config" path='#[vars.project_name ++ "/src/main/resources/local.yaml"]' createParentDirectories="false"/>
-	</sub-flow>
-	<sub-flow name="create-dev-yaml-file" doc:id="c8b853b0-4938-43ec-a197-f67dad837998" >
-		<set-payload value='#[readUrl("classpath://template/dev.yaml", "application/java")]' doc:name="Set Payload" doc:id="584cc793-3dff-4ec4-86bc-f565c0cce93c" />
-		<file:write doc:name="dev.yaml" doc:id="aa6a3be1-598d-4cb9-8768-f59939bfe01d" config-ref="working_dir_config" path='#[vars.project_name ++ "/src/main/resources/dev.yaml"]' createParentDirectories="false"/>
-	</sub-flow>
-	<sub-flow name="create-test-yaml-file" doc:id="11db2773-19e2-41a6-8b73-2387d264349a" >
-		<set-payload value='#[readUrl("classpath://template/test.yaml", "application/java")]' doc:name="Set Payload" doc:id="0ae438b8-e643-4179-8256-b4b8f55027a0" />
-		<file:write doc:name="test.yaml" doc:id="a70e20ad-a608-4e21-a39d-f6150ddf8d7f" config-ref="working_dir_config" path='#[vars.project_name ++ "/src/main/resources/test.yaml"]' createParentDirectories="false"/>
-	</sub-flow>
-	<sub-flow name="create-prod-yaml-file" doc:id="acb4f30c-e41d-4086-a406-3e23958355ab" >
-		<set-payload value='#[readUrl("classpath://template/prod.yaml", "application/java")]' doc:name="Set Payload" doc:id="b10c2659-1dbb-4ccc-8e6b-f8caa5a428e7" />
-		<file:write doc:name="prod.yaml" doc:id="86ff6eae-389d-4ecb-89d7-184fd5b6dbb9" config-ref="working_dir_config" path='#[vars.project_name ++ "/src/main/resources/prod.yaml"]' createParentDirectories="false"/>
+ <sub-flow name="create-files" doc:id="1044b5c2-b5bf-419f-a275-150a8db734a2" >
+		<ee:transform doc:name="Transform Message" doc:id="61e3005e-b2ef-4da1-a835-b3c056fb7272" >
+			<ee:message >
+				<ee:set-payload resource="file_config.dwl" />
+			</ee:message>
+		</ee:transform>
+		<foreach doc:name="For Each" doc:id="8922b898-37c1-4671-8db4-3ac74692b3ac" collection="#[dw::core::Objects::entrySet(payload)]">
+			<logger level="INFO" doc:name="Logger" doc:id="e4b2f1c2-d5d3-4d7f-842d-fca56ff1bb61" message="payload is ---&gt; #[payload]"/>
+		<set-variable value="#[payload.value]" doc:name="fileName" doc:id="69704a2e-9c34-49f1-9eae-24927d2112dd" variableName="fileName"/>
+			<set-payload value='#[readUrl(payload.key, "application/java") replace /[~]/ with (vars.project_name)]' doc:name="Set Payload" doc:id="fc2d8427-ffac-4321-bce3-86290b0c1be6" />
+			<file:write doc:name="files" doc:id="cc5eb24e-55a2-4cb4-9a40-e089aab4d442" config-ref="working_dir_config" path='#[vars.project_name ++ vars.fileName]' createParentDirectories="false"/>
+		</foreach>		
 	</sub-flow>
 </mule>
