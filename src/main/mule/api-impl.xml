@@ -46,7 +46,7 @@ http://www.mulesoft.org/schema/mule/java http://www.mulesoft.org/schema/mule/jav
 		<foreach doc:name="For Each" doc:id="8922b898-37c1-4671-8db4-3ac74692b3ac" collection="#[dw::core::Objects::entrySet(payload)]">
 			<logger level="INFO" doc:name="Logger" doc:id="e4b2f1c2-d5d3-4d7f-842d-fca56ff1bb61" message="payload is ---&gt; #[payload]"/>
 		<set-variable value="#[payload.value]" doc:name="fileName" doc:id="69704a2e-9c34-49f1-9eae-24927d2112dd" variableName="fileName"/>
-			<set-payload value='#[readUrl(payload.key, "application/java") replace /[~]/ with (vars.project_name)]' doc:name="Set Payload" doc:id="fc2d8427-ffac-4321-bce3-86290b0c1be6" />
+			<set-payload value='#[readUrl("classpath://template/" ++ payload.key, "application/java") replace /[~]/ with (vars.project_name)]' doc:name="Set Payload" doc:id="fc2d8427-ffac-4321-bce3-86290b0c1be6" />
 			<file:write doc:name="files" doc:id="cc5eb24e-55a2-4cb4-9a40-e089aab4d442" config-ref="working_dir_config" path='#[vars.project_name ++ vars.fileName]' createParentDirectories="false"/>
 		</foreach>		
 	</sub-flow>
