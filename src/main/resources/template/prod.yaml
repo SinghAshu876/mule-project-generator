@@ -15,7 +15,7 @@ reconnect:
 http:
  sys:
   bat:
-   host: "mule-worker-internal-system-hr-sf-employeedetails-v2.de-c1.cloudhub.io"
+   host: "0.0.0.0"
    port: "8091"
    path:
     empdetails: "employeeDetails"
