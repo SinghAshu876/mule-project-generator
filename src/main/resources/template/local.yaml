@@ -25,21 +25,11 @@ http:
 targetFlag: "true"
 appId: "004"
     
-#common:
-# requester:
-#  configref: "HTTP_Request_configuration_without_TLS"
-#  host: "localhost"
-#  port: "8091"
-#  basepath: ""
-#  path: "/errorMappings"
-# connection:
-#  frequency: "1000"
-#  retrycount: "3"
-#  responsetimeout: "30000"   
+
 common:
  requester:
   configref: "HTTP_Request_configuration_with_TLS"
-  host: "dev-int.bat.net"
+  host: "localhost"
   port: "443"
   basepath: ""
   path: "/s-common-error-handler-v2-dev/errorMappings"
