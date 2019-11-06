@@ -16,7 +16,7 @@ reconnect:
 http:
  sys:
   bat:
-   host: "mule-worker-internal-system-hr-sf-employeedetails-v2-dev.de-c1.cloudhub.io"
+   host: "0.0.0.0"
    port: "8091"
    path:
     empdetails: "employeeDetails"
@@ -28,7 +28,7 @@ appId: "004"
 common:
  requester:
   configref: "HTTP_Request_configuration_without_TLS"
-  host: "mule-worker-internal-s-common-error-handler-v2-dev.de-c1.cloudhub.io"
+  host: "0.0.0.0"
   port: "8091"
   basepath: ""
   path: "/errorMappings"
